@@ -1,13 +1,40 @@
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-
+import {updateNote} from "../../store/Actions/noteAction";
+import useInput from '../../customHook/useInput';
+import {useHistory} from 'react-router-dom';
 
 const EditForm = () => {
     const note = useSelector((state) => state.note);
+    const history = useHistory();
+    const [title, bindTitle, resetTitle] = useInput(note.title);
+    const [content, bindContent, resetContent] = useInput(note.content);
+    const dispatch = useDispatch();
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        dispatch(updateNote({id:note.id, title, content}));
+        resetTitle();
+        resetContent();
+        history.push('/');
+    }
     console.log('edit form', note)
+
     return (
         <div>
-            
+            <form onSubmit={handleSubmit} className="white">
+                <h5 className="grey-text text-darken-3">
+                    New Note
+                </h5>
+                <div className="input-field">
+                    <input id="note_title" type="text" className="validate" {...bindTitle} />
+                    <label className="active" htmlFor="note_title">Note title</label>
+                </div>
+                <div className="input-field">
+                <textarea id="note_content" className="materialize-textarea" {...bindContent}></textarea>
+                <label className='active' htmlFor="note_content">Note Content</label>
+                </div>
+                <button className='btn-green'>update</button>
+            </form>
         </div>
     )
 }
